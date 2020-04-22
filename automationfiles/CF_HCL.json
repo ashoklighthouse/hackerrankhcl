@@ -1,0 +1,54 @@
+{
+  "Description": "Create an EC2 instance by AWS CloudFormation",
+  "Resources": {
+    "SecurityGroupDemoSvrTraffic": {
+      "Type": "AWS::EC2::SecurityGroup",
+      "Properties": {
+        "GroupName": "sgDemoSvr",
+        "SecurityGroupIngress": [
+          {
+            "IpProtocol": "tcp",
+            "FromPort": 22,
+            "ToPort": 22,
+            "CidrIp": "0.0.0.0/0",
+            "Description": "For traffic from Internet"
+          }
+        ],
+        "GroupDescription": "Security Group for demo server",
+        "VpcId": "vpc-259c325d"
+      }
+    },
+    "EC2InstanceDemoSvr": {
+      "Type": "AWS::EC2::Instance",
+      "Properties": {
+        "AvailabilityZone": "us-east-1a",
+        "BlockDeviceMappings": [
+          {
+            "DeviceName": "/dev/sda1",
+            "Ebs": {
+              "DeleteOnTermination": "true",
+              "VolumeSize": "8",
+              "VolumeType": "gp2"
+            }
+          }
+        ],
+        "ImageId": "ami-0ce2e5b7d27317779",
+        "InstanceType": "t2.micro",
+        "KeyName": "dev",
+        "NetworkInterfaces": [
+          {
+            "Description": "Primary network interface",
+            "DeviceIndex": "0",
+            "SubnetId": "subnet-66ba4c49",
+            "PrivateIpAddress": "172.31.80.6",
+            "GroupSet": [
+              {
+                "Ref": "SecurityGroupDemoSvrTraffic"
+              }
+            ]
+          }
+        ]
+      }
+    }
+  }
+}

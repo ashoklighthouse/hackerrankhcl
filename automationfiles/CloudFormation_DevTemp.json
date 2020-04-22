@@ -1,0 +1,45 @@
+{
+  "Description": "Create an EC2 instance by AWS CloudFormation",
+  "Resources": {
+    "SecurityGroupDevTraffic": {
+      "Type": "AWS::EC2::SecurityGroup",
+      "Properties": {
+        "GroupName": "devenv",
+        "SecurityGroupIngress": [
+          {
+            "IpProtocol": "tcp",
+            "FromPort": 22,
+            "ToPort": 22,
+            "CidrIp": "0.0.0.0/0",
+            "Description": "For traffic from Internet"
+          }
+        ],
+        "GroupDescription": "Security Group for devenv server",
+        "VpcId": "vpc-259c325d"
+      }
+    },
+    "EC2InstanceDevSvr": {
+      "Type": "AWS::EC2::Instance",
+      "DependsOn": "SecurityGroupDevTraffic",    
+      "Properties": {
+        "AvailabilityZone": "us-east-1a",
+        "ImageId": "ami-0323c3dd2da7fb37d",
+        "InstanceType": "t2.micro",
+        "KeyName": "dev",
+        "NetworkInterfaces" : [
+              {
+                "GroupSet" : [
+                  { 
+                    "Ref" : "SecurityGroupDevTraffic" 
+                  }
+                ],
+                "AssociatePublicIpAddress" : "true",
+                "DeviceIndex" : "0",
+                "DeleteOnTermination" : "true",
+                "SubnetId" : "subnet-66ba4c49"
+              }
+            ]
+      }
+    }
+  }
+}
